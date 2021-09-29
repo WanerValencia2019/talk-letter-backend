@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../../reactjs/talk_letter"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "cineScape"
+	}
+}
