@@ -8,10 +8,9 @@ const authHandler = (req, res, next) => {
       .status(403)
       .json({ message: "La peticion no tiene la autorizacion" });
   }
-
   let token = req.headers.authorization.replace(/['"]+/g, "");
 
-  jwt.verify(token, jwt, (err, decoded) => {
+  jwt.verify(token,jwtSecret, (err, decoded) => {
     if (!err) {
       req.userTokenInfo = decoded;
       next();

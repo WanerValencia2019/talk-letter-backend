@@ -4,6 +4,8 @@ const { Server } = require("socket.io");
 const passport = require('passport');
 //routes
 const authRoutes = require('./../routes/auth.routes');
+const categoryRoutes = require('./../routes/category.routes');
+const postRoutes = require('./../routes/posts.routes');
 
 
 //midleware
@@ -23,6 +25,8 @@ app.use(passport.initialize())
 
 //LOAD ROUTES
 app.use('/api/auth', authRoutes);
+app.use('/api/category', categoryRoutes);
+app.use('/api/post', postRoutes);
 
 io.on('connection', (socket) => {
   console.log("CONECTADO A EL S");

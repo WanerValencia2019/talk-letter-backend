@@ -60,7 +60,7 @@ const register = async (req, res) => {
         firstName: firstName,
         lastName: lastName,
       });
-      user.save((err, small) => {
+      user.save((err, result) => {
         console.log(err);
         if (err) {
           res.status(500).json({

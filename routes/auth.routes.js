@@ -2,7 +2,6 @@ const { Router } = require('express');
 const passport = require('passport');
 const { register, signinWithEmail, facebookLogin } = require('./../controllers/auth.controller');
 
-const authHandler = require('./../middlewares/authHandler');
 const router = Router();
 const FacebookTokenStrategy = require("passport-facebook-token");
 

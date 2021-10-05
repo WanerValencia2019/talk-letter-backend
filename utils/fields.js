@@ -11,7 +11,15 @@ const loginFields = {
     password: "Este campo es requerido",
 };
 
+const postFields = {
+    created_by: "Este campo es requerido",
+    categories: "Este campo es requerido",
+    title: "Este campo es requerido",
+    content: "Este campo es requerido",
+}
+
 module.exports = {
     registerFields,
-    loginFields
+    loginFields,
+    postFields
 }
