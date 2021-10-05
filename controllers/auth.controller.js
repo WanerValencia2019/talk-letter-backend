@@ -1,11 +1,40 @@
 const bycrypt = require("crypto");
 const jwt = require("jsonwebtoken");
-
 const { loginFields, registerFields } = require("./../utils/fields");
 
 const User = require("./../models/users.model");
 
+const passport = require('passport');
+
 const jwtSecret = process.env.JWT_SECRET;
+
+var createToken = function (auth) {
+  return jwt.sign(
+    {
+      id: auth.id,
+    },
+    jwtSecret,
+    {
+      expiresIn: 60 * 120,
+    }
+  );
+};
+
+var generateToken = function (req, res, next) {
+  req.token = createToken(req.auth);
+  next();
+};
+let sendToken = function (req, res) {
+  res.status(200).json({ token: req.token });
+};
+
+const facebookLogin = (passport.authenticate("facebook-token"),(req, res, next)=>{
+    console.log(req.body);
+    res.status(200).json({error: "No hay nada"});
+    next();
+});
+
+
 
 const register = async (req, res) => {
   const { email, password, username, firstName, lastName } = req.body;
@@ -21,7 +50,7 @@ const register = async (req, res) => {
 
     if (verifyEmail && verifyUsername) {
       res.status(400).json({
-        msg: "Este usuario ya se encuentra registrado",
+        message: "Este usuario ya se encuentra registrado",
       });
     } else {
       const user = new User({
@@ -35,11 +64,11 @@ const register = async (req, res) => {
         console.log(err);
         if (err) {
           res.status(500).json({
-            msg: "Error al registrar el usuario",
+            message: "Error al registrar el usuario",
           });
         } else {
           res.status(200).json({
-            msg: "Usuario creado correctamente",
+            message: "Usuario creado correctamente",
           });
         }
       });
@@ -60,14 +89,18 @@ const signinWithEmail = (req, res) => {
       .exec()
       .then((result) => {
         const { _id, email, username, firstName, lastName } = result;
-        let token = jwt.sign({
+        let token = jwt.sign(
+          {
             user: {
-                email,
-                username,
-            }
-        }, jwtSecret ,{ expiresIn: '5000m' });
+              email,
+              username,
+            },
+          },
+          jwtSecret,
+          { expiresIn: "5000m" }
+        );
         res.status(200).json({
-          msg: "Has iniciado sesión correctamente",
+          message: "Has iniciado sesión correctamente",
           token,
           user: {
             _id,
@@ -81,7 +114,7 @@ const signinWithEmail = (req, res) => {
       .catch((err) => {
         console.log(err);
         res.status(400).json({
-          msg: "Credenciales incorrectos",
+          message: "Credenciales incorrectos",
         });
       });
   }
@@ -90,4 +123,5 @@ const signinWithEmail = (req, res) => {
 module.exports = {
   register,
   signinWithEmail,
+  facebookLogin
 };

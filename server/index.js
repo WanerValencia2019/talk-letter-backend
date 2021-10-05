@@ -1,7 +1,7 @@
 const express = require('express');
 const http = require('http');
 const { Server } = require("socket.io");
-
+const passport = require('passport');
 //routes
 const authRoutes = require('./../routes/auth.routes');
 
@@ -19,7 +19,7 @@ app.use(cors());
 app.use(morgan("dev"));
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
-
+app.use(passport.initialize())
 
 //LOAD ROUTES
 app.use('/api/auth', authRoutes);
