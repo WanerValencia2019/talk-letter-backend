@@ -40,6 +40,8 @@ const createCategory = (req, res) => {
 const updateCategory = (req, res) => {
   const { id } = req.params;
   const { name } = req.body;
+  const user =req?.userTokenInfo?.user;
+
   if (!name || !id) {
     res.status(400).json({
       id: "Este campo es requerido",

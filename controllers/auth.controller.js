@@ -94,6 +94,7 @@ const signinWithEmail = (req, res) => {
             user: {
               email,
               username,
+              id: _id,
             },
           },
           jwtSecret,

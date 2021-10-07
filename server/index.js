@@ -32,6 +32,4 @@ io.on('connection', (socket) => {
   console.log("CONECTADO A EL S");
 });
 
-
-
 module.exports = server;
