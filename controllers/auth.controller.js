@@ -89,16 +89,19 @@ const signinWithEmail = (req, res) => {
       .exec()
       .then((result) => {
         const { _id, email, username, firstName, lastName } = result;
+        console.log(result);
         let token = jwt.sign(
           {
             user: {
               email,
               username,
+              firstName,
+              lastName,
               id: _id,
             },
           },
           jwtSecret,
-          { expiresIn: "5000m" }
+          { expiresIn: "50000m" }
         );
         res.status(200).json({
           message: "Has iniciado sesión correctamente",

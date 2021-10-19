@@ -1,7 +1,13 @@
 const { Schema, model, Types } = require("mongoose");
 
 const postSchema = new Schema({
-  created_by: { type: Types.ObjectId, required: true },
+  created_by: {
+    type: {
+      id: Types.ObjectId,
+      lastName: String,
+      firstName: String,
+    }
+  },
   categories: { type: Array, required: true },
   title: String,
   content: String,

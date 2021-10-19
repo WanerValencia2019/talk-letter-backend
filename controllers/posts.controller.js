@@ -8,21 +8,25 @@ const listPosts = (req, res) => {
         message: "Ha ocurrido un error en el servidor",
       });
     }
-    res.status(200).json({
-      data: result,
-    });
+    res.status(200).json(result);
   });
 };
 
 const createPost = (req, res) => {
-  const { created_by, categories, title, content } = req.body;
-  const user = req?.userTokenInfo?.user;
-  if (!created_by || !categories || !title || !content) {
+  const { categories, title, content } = req.body;
+  const { id, firstName, lastName } = req?.userTokenInfo?.user;
+  if (!categories || !title || !content) {
     res.status(400).json({
       ...postFields,
     });
   } else {
-    const post = new Post({ created_by, categories, title, content });
+    const post = new Post({ 
+      created_by: {
+        id,
+        firstName, 
+        lastName 
+      },
+      categories, title, content });
     post.save((err, result) => {
       console.log(err);
       if (err) {
@@ -77,25 +81,23 @@ const updatePost = (req, res) => {
 };
 
 const addComment = (req, res) => {
-  const { userId, firstName, LastName, message } = req.body;
-  const { id } = req.params;
+  const { message } = req.body;
+  const { id , firstName, lastName } = req?.userTokenInfo?.user;
+  const postId = req.params.id;
 
-  if (!userId || !message || !firstName || !LastName) {
+  if (!message) {
     res.status(200).json({
-      userId: "Este campo es requerido",
       message: "Este campo es requerido",
-      firstName: "Este campo es requerido",
-      LastName: "Este campo es requerido",
     });
   } else {
     Post.updateOne(
-      { _id: id },
+      { _id: postId },
       {
         $push: {
           comments: {
-            userId: userId,
+            userId: id,
             firstName: firstName,
-            LastName: LastName,
+            lastName: lastName,
             message: message,
           },
         },
@@ -121,25 +123,17 @@ const addComment = (req, res) => {
   }
 };
 
-const addLike = (req, res) => {
-  const { userId, firstName, LastName } = req.body;
-  const { id } = req.params;
-
-  if (!userId || !firstName || !LastName) {
-    res.status(200).json({
-      userId: "Este campo es requerido",
-      firstName: "Este campo es requerido",
-      LastName: "Este campo es requerido",
-    });
-  } else {
+const addLike = (req, res) => {  
+  const { id , firstName, lastName } = req?.userTokenInfo?.user;
+  const postId = req.params.id;
     Post.updateOne(
-      { _id: id },
+      { _id: postId },
       {
         $addToSet: {
           likes: {
-            userId: userId,
-            firstName: firstName,
-            LastName: LastName,
+            userId: id,
+            firstName,
+            lastName,
           },
         },
       },
@@ -160,8 +154,41 @@ const addLike = (req, res) => {
           });
         }
       }
+    );  
+};
+
+const deleteLike = (req, res) => {
+  const { id } = req?.userTokenInfo?.user;
+  const postId = req.params.id;
+
+  console.log(postId);
+    Post.updateOne(
+      { _id: postId },
+      {
+        $pull: {
+          likes: {
+            userId: id,
+          },
+        },
+      },
+      {},
+      (err, result) => {
+        if (err) {
+          return res.status(400).json({
+            message: "Error al eliminar el like",
+          });
+        }
+        if (result.modifiedCount === 1) {
+          res.status(200).json({
+            message: "Like eliminado correctamente",
+          });
+        } else {
+          return res.status(404).json({
+            message: "La publicación no existe",
+          });
+        }
+      }
     );
-  }
 };
 
 module.exports = {
@@ -170,4 +197,5 @@ module.exports = {
   updatePost,
   addComment,
   addLike,
+  deleteLike
 };

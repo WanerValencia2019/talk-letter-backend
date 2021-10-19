@@ -7,9 +7,7 @@ const listCategories = (req, res) => {
         message: "Ha ocurrido un error en el servidor",
       });
     }
-    res.status(200).json({
-      data: result,
-    });
+    res.status(200).json(result);
   });
 };
 
