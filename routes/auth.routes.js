@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const passport = require('passport');
-const { register, signinWithEmail, facebookLogin } = require('./../controllers/auth.controller');
+const { register, signinWithEmail, facebookLogin, signinAdmin } = require('./../controllers/auth.controller');
 
 const router = Router();
 const FacebookTokenStrategy = require("passport-facebook-token");
@@ -23,6 +23,7 @@ passport.use('facebook-token',
 
 router.post('/register', register);
 router.post('/signinWithEmail', signinWithEmail);
+router.post('/signinAdmin',signinAdmin);
 router.post('/facebook', facebookLogin);
 
 module.exports = router;

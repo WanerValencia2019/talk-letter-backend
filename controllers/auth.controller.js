@@ -88,7 +88,7 @@ const signinWithEmail = (req, res) => {
     User.findOne({ email, password: passEncripted })
       .exec()
       .then((result) => {
-        const { _id, email, username, firstName, lastName } = result;
+        const { _id, email, username, firstName, lastName, role } = result;
         console.log(result);
         let token = jwt.sign(
           {
@@ -97,6 +97,7 @@ const signinWithEmail = (req, res) => {
               username,
               firstName,
               lastName,
+              role: role || 'basic',
               id: _id,
             },
           },
@@ -124,8 +125,58 @@ const signinWithEmail = (req, res) => {
   }
 };
 
+const signinAdmin = (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    res.status(400).json(loginFields);
+  } else {
+    let passEncripted = bycrypt
+      .createHmac("sha256", password)
+      .update("talkLetter")
+      .digest("base64");
+    User.findOne({ email, password: passEncripted, role: 'admin' })
+      .exec()
+      .then((result) => {
+        const { _id, email, username, firstName, lastName, role } = result;
+        let token = jwt.sign(
+          {
+            user: {
+              email,
+              username,
+              firstName,
+              lastName,
+              role: role || 'basic',
+              id: _id,
+            },
+          },
+          jwtSecret,
+          { expiresIn: "50000m" }
+        );
+        res.status(200).json({
+          message: "Has iniciado sesión correctamente",
+          token,
+          user: {
+            _id,
+            email,
+            username,
+            firstName,
+            lastName,
+          },
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        res.status(400).json({
+          message: "Credenciales incorrectos",
+        });
+      });
+  }
+};
+
+
 module.exports = {
   register,
   signinWithEmail,
-  facebookLogin
+  facebookLogin,
+  signinAdmin
 };

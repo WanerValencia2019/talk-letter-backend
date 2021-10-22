@@ -61,8 +61,31 @@ const updateCategory = (req, res) => {
   }
 };
 
+const deleteCategory = (req, res) => {
+  const  role = req?.userTokenInfo?.user?.role;
+  const { id } = req.params;
+
+  if(role !== 'admin'){
+    res.status(403).json({
+      message: 'No estás autorizado para esta acción',
+    })    
+  }
+  Category.deleteOne({_id: id})
+  .then((result)=>{
+    res.status(200).json({
+      message: "Categoría eliminada correctamente",
+    })
+  })
+  .catch((err)=>{
+     res.status(500).json({
+        message: "Ha ocurrido un error en el servidor",
+     });
+  })
+};
+
 module.exports = {
   createCategory,
   listCategories,
   updateCategory,
+  deleteCategory,
 };

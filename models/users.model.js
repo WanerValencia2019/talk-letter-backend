@@ -14,6 +14,8 @@ const userSchema = new Schema(
     firstName: { type: String, required: true },
     lastName: { type: String, required: true },
     password: { type: String, required: true },
+    //roles ['basic', 'admin']
+    role: {type: String, required: true, default: 'basic'},
     facebookProvider: {
       type: {
         id: String,
@@ -21,7 +23,7 @@ const userSchema = new Schema(
       },
       select: false,
     },
-    createdAt: { type: Date, required: false, default: Date.now },
+    createdAt: { type: Date, required: false, default: Date.now },    
   },
   { collection: "users" }
 );
